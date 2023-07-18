@@ -28,7 +28,7 @@ import static org.quartz.utils.Key.DEFAULT_GROUP;
 
 import java.util.TimeZone;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.quartz.Job;
 import org.quartz.JobKey;

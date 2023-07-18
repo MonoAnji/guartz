@@ -16,59 +16,54 @@ package org.nnsoft.guice.guartz;
  *    limitations under the License.
  */
 
-import static com.google.inject.Guice.createInjector;
-import static junit.framework.Assert.assertEquals;
+import jakarta.inject.Inject;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.quartz.Scheduler;
 
 import java.util.Properties;
 
-import javax.inject.Inject;
+import static com.google.inject.Guice.createInjector;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.quartz.Scheduler;
+public class WithPropertiesTestCase {
+	private static final String INSTANCE_NAME = "Guartz";
 
-public class WithPropertiesTestCase
-{
-    private static final String INSTANCE_NAME = "Guartz";
+	@Inject
+	private Scheduler scheduler;
 
-    @Inject
-    private Scheduler scheduler;
 
-    @Before
-    public void setUp()
-    {
-        createInjector( new QuartzModule()
-        {
-            @Override
-            protected void schedule()
-            {
-                Properties properties = new Properties()
-                {
-                    private static final long serialVersionUID = 1L;
+	@BeforeEach
+	public void setUp() {
+		createInjector(new QuartzModule() {
+			@Override
+			protected void schedule() {
+				Properties properties = new Properties() {
+					private static final long serialVersionUID = 1L;
 
-                    {
-                        put( "org.quartz.scheduler.instanceName", INSTANCE_NAME );
-                        put( "org.quartz.threadPool.class", "org.quartz.simpl.ZeroSizeThreadPool" );
-                    }
-                };
-                configureScheduler().withProperties( properties );
-            }
-        } ).getMembersInjector( WithPropertiesTestCase.class ).injectMembers( this );
-    }
+					{
+						put("org.quartz.scheduler.instanceName", INSTANCE_NAME);
+						put("org.quartz.threadPool.class", "org.quartz.simpl.ZeroSizeThreadPool");
+					}
+				};
+				configureScheduler().withProperties(properties);
+			}
+		}).getMembersInjector(WithPropertiesTestCase.class).injectMembers(this);
+	}
 
-    @After
-    public void tearDown()
-        throws Exception
-    {
-        scheduler.shutdown();
-    }
 
-    @Test
-    public void testPropertiesConfiguredInstanceName()
-        throws Exception
-    {
-        assertEquals( scheduler.getSchedulerName(), INSTANCE_NAME );
-    }
+	@AfterEach
+	public void tearDown()
+			throws Exception {
+		scheduler.shutdown();
+	}
+
+
+	@Test
+	public void testPropertiesConfiguredInstanceName()
+			throws Exception {
+		assertEquals(scheduler.getSchedulerName(), INSTANCE_NAME);
+	}
 
 }

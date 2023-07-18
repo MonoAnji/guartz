@@ -16,84 +16,72 @@ package org.nnsoft.guice.guartz;
  *    limitations under the License.
  */
 
-import static com.google.inject.Guice.createInjector;
-import static junit.framework.Assert.assertTrue;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.Scheduler;
-import org.quartz.SimpleScheduleBuilder;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.quartz.*;
 
-public class GuartzSimpleTriggerTimerTestCase
-{
+import static com.google.inject.Guice.createInjector;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-    @Inject
-    private SimpleTask timedTask;
+public class GuartzSimpleTriggerTimerTestCase {
 
-    @Inject
-    private Scheduler scheduler;
+	@Inject
+	private SimpleTask timedTask;
 
-    @Before
-    public void setUp()
-        throws Exception
-    {
-        createInjector( new QuartzModule()
-        {
+	@Inject
+	private Scheduler scheduler;
 
-            @Override
-            protected void schedule()
-            {
-                Trigger trigger =
-                    TriggerBuilder.newTrigger().withSchedule( SimpleScheduleBuilder.repeatSecondlyForever() ).build();
 
-                scheduleJob( SimpleTask.class ).withTrigger( trigger );
-            }
+	@BeforeEach
+	public void setUp() {
+		createInjector(new QuartzModule() {
 
-        } ).getMembersInjector( GuartzSimpleTriggerTimerTestCase.class ).injectMembers( this );
-    }
+			@Override
+			protected void schedule() {
+				Trigger trigger =
+						TriggerBuilder.newTrigger().withSchedule(SimpleScheduleBuilder.repeatSecondlyForever()).build();
 
-    @After
-    public void tearDown()
-        throws Exception
-    {
-        this.scheduler.shutdown();
-    }
+				scheduleJob(SimpleTask.class).withTrigger(trigger);
+			}
 
-    @Test
-    public void minimalTest()
-        throws Exception
-    {
-        Thread.sleep( 5000 );
-        assertTrue( this.timedTask.getInvocation() > 0 );
-    }
+		}).getMembersInjector(GuartzSimpleTriggerTimerTestCase.class).injectMembers(this);
+	}
 
-    @Singleton
-    private static class SimpleTask
-        implements Job
-    {
 
-        private int invocation = 0;
+	@AfterEach
+	public void tearDown()
+			throws Exception {
+		this.scheduler.shutdown();
+	}
 
-        public void execute( JobExecutionContext context )
-            throws JobExecutionException
-        {
-            invocation++;
-        }
 
-        public int getInvocation()
-        {
-            return invocation;
-        }
+	@Test
+	public void minimalTest()
+			throws Exception {
+		Thread.sleep(5000);
+		assertTrue(this.timedTask.getInvocation() > 0);
+	}
 
-    }
+
+	@Singleton
+	private static class SimpleTask
+			implements Job {
+
+		private int invocation = 0;
+
+
+		public void execute(JobExecutionContext context) {
+			invocation++;
+		}
+
+
+		public int getInvocation() {
+			return invocation;
+		}
+
+	}
 
 }

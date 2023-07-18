@@ -17,52 +17,48 @@ package org.nnsoft.guice.guartz;
  */
 
 import com.google.inject.Inject;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.quartz.Scheduler;
 
 import static com.google.inject.Guice.createInjector;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class RepeatedSchedulingTestCase
-{
+public class RepeatedSchedulingTestCase {
 
-    @Inject
-    private TimedTask timedTask;
+	@Inject
+	private TimedTask timedTask;
 
-    @Inject
-    private Scheduler scheduler;
+	@Inject
+	private Scheduler scheduler;
 
-    @Before
-    public void setUp()
-        throws Exception
-    {
-        createInjector( new QuartzModule()
-        {
 
-            @Override
-            protected void schedule()
-            {
-                scheduleJob( TimedTask.class ).updateExistingTrigger();
-                scheduleJob( TimedTask.class ).updateExistingTrigger();
-            }
+	@BeforeEach
+	public void setUp() {
+		createInjector(new QuartzModule() {
 
-        } ).getMembersInjector( RepeatedSchedulingTestCase.class ).injectMembers( this );
-    }
+			@Override
+			protected void schedule() {
+				scheduleJob(TimedTask.class).updateExistingTrigger();
+				scheduleJob(TimedTask.class).updateExistingTrigger();
+			}
 
-    @After
-    public void tearDown()
-        throws Exception
-    {
-        this.scheduler.shutdown();
-    }
+		}).getMembersInjector(RepeatedSchedulingTestCase.class).injectMembers(this);
+	}
 
-    @Test
-    public void minimalTest()
-        throws Exception
-    {
-        Thread.sleep( 5000 );
-        assertTrue( this.timedTask.getInvocationsTimedTaskA() > 0 );
-    }
+
+	@AfterEach
+	public void tearDown()
+			throws Exception {
+		this.scheduler.shutdown();
+	}
+
+
+	@Test
+	public void minimalTest()
+			throws Exception {
+		Thread.sleep(5000);
+		assertTrue(this.timedTask.getInvocationsTimedTaskA() > 0);
+	}
 }

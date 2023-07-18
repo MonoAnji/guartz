@@ -16,56 +16,52 @@ package org.nnsoft.guice.guartz;
  *    limitations under the License.
  */
 
-import static org.junit.Assert.assertTrue;
-
-import javax.inject.Inject;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import com.google.inject.Guice;
+import jakarta.inject.Inject;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.quartz.Scheduler;
 
-import com.google.inject.Guice;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ManualStartTestCase
-{
+public class ManualStartTestCase {
 
-    @Inject
-    private Scheduler scheduler;
+	@Inject
+	private Scheduler scheduler;
 
-    @Inject
-    private TimedTask timedTask;
+	@Inject
+	private TimedTask timedTask;
 
-    @Before
-    public void setUp()
-    {
-        Guice.createInjector( new QuartzModule()
-        {
-            @Override
-            protected void schedule()
-            {
-                configureScheduler().withManualStart();
-                scheduleJob( TimedTask.class );
-            }
-        } ).getMembersInjector( ManualStartTestCase.class ).injectMembers( this );
-    }
 
-    @After
-    public void tearDown()
-        throws Exception
-    {
-        scheduler.shutdown();
-    }
+	@BeforeEach
+	public void setUp() {
+		Guice.createInjector(new QuartzModule() {
+			@Override
+			protected void schedule() {
+				configureScheduler().withManualStart();
+				scheduleJob(TimedTask.class);
+			}
+		}).getMembersInjector(ManualStartTestCase.class).injectMembers(this);
+	}
 
-    @Test
-    public void testManualStart()
-        throws Exception
-    {
-        Thread.sleep( 5000L );
-        assertTrue( timedTask.getInvocationsTimedTaskA() == 0 );
-        scheduler.start();
-        Thread.sleep( 5000L );
-        assertTrue( timedTask.getInvocationsTimedTaskA() > 0 );
-    }
+
+	@AfterEach
+	public void tearDown()
+			throws Exception {
+		scheduler.shutdown();
+	}
+
+
+	@Test
+	public void testManualStart()
+			throws Exception {
+		Thread.sleep(5000L);
+		assertEquals(0, timedTask.getInvocationsTimedTaskA());
+		scheduler.start();
+		Thread.sleep(5000L);
+		assertTrue(timedTask.getInvocationsTimedTaskA() > 0);
+	}
 
 }

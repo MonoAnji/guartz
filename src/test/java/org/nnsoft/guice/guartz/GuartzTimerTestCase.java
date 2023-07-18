@@ -16,67 +16,62 @@ package org.nnsoft.guice.guartz;
  *    limitations under the License.
  */
 
-import static com.google.inject.Guice.createInjector;
-import static junit.framework.Assert.assertTrue;
-
-import javax.inject.Inject;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import jakarta.inject.Inject;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.quartz.Scheduler;
+
+import static com.google.inject.Guice.createInjector;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
  */
-public class GuartzTimerTestCase
-{
+public class GuartzTimerTestCase {
 
-    @Inject
-    private TimedTask timedTask;
+	@Inject
+	private TimedTask timedTask;
 
-    @Inject
-    private Scheduler scheduler;
+	@Inject
+	private Scheduler scheduler;
 
-    public void setTimedTask( TimedTask timedTask )
-    {
-        this.timedTask = timedTask;
-    }
 
-    public void setScheduler( Scheduler scheduler )
-    {
-        this.scheduler = scheduler;
-    }
+	public void setTimedTask(TimedTask timedTask) {
+		this.timedTask = timedTask;
+	}
 
-    @Before
-    public void setUp()
-        throws Exception
-    {
-        createInjector( new QuartzModule()
-        {
 
-            @Override
-            protected void schedule()
-            {
-                scheduleJob( TimedTask.class );
-            }
+	public void setScheduler(Scheduler scheduler) {
+		this.scheduler = scheduler;
+	}
 
-        } ).getMembersInjector( GuartzTimerTestCase.class ).injectMembers( this );
-    }
 
-    @After
-    public void tearDown()
-        throws Exception
-    {
-        this.scheduler.shutdown();
-    }
+	@BeforeEach
+	public void setUp() {
+		createInjector(new QuartzModule() {
 
-    @Test
-    public void minimalTest()
-        throws Exception
-    {
-        Thread.sleep( 5000 );
-        assertTrue( this.timedTask.getInvocationsTimedTaskA() > 0 );
-    }
+			@Override
+			protected void schedule() {
+				scheduleJob(TimedTask.class);
+			}
+
+		}).getMembersInjector(GuartzTimerTestCase.class).injectMembers(this);
+	}
+
+
+	@AfterEach
+	public void tearDown()
+			throws Exception {
+		this.scheduler.shutdown();
+	}
+
+
+	@Test
+	public void minimalTest()
+			throws Exception {
+		Thread.sleep(5000);
+		assertTrue(this.timedTask.getInvocationsTimedTaskA() > 0);
+	}
 
 }

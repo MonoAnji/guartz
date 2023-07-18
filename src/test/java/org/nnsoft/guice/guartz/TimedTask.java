@@ -16,32 +16,28 @@ package org.nnsoft.guice.guartz;
  *    limitations under the License.
  */
 
-import javax.inject.Singleton;
-
+import jakarta.inject.Singleton;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 
 /**
- * 
+ *
  */
 @Singleton
-@Scheduled( jobName = "test", cronExpression = "0/2 * * * * ?" )
+@Scheduled(jobName = "test", cronExpression = "0/2 * * * * ?")
 public class TimedTask
-    implements Job
-{
+		implements Job {
 
-    private int invocationsA = 0;
+	private int invocationsA = 0;
 
-    public int getInvocationsTimedTaskA()
-    {
-        return this.invocationsA;
-    }
 
-    public void execute( JobExecutionContext context )
-        throws JobExecutionException
-    {
-        this.invocationsA++;
-    }
+	public int getInvocationsTimedTaskA() {
+		return this.invocationsA;
+	}
+
+
+	public void execute(JobExecutionContext context) {
+		this.invocationsA++;
+	}
 
 }
